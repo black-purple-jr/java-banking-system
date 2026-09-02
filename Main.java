@@ -28,7 +28,7 @@ public class Main {
         case 1 -> isAuthenticated = login();
         case 2 -> register();
         case 3 -> isRunning = false;
-        default -> System.out.println(Colors.RED + "─>> Invalid Operation" + Colors.RESET);
+        default -> System.out.println(Colors.RED + ">>> Invalid Operation" + Colors.RESET);
       }
     }
 
@@ -48,7 +48,7 @@ public class Main {
         case 2 -> handleDeposit();
         case 3 -> handleWithdraw();
         case 4 -> isRunning = false;
-        default -> System.out.println(Colors.RED + "─>> Invalid Operation" + Colors.RESET);
+        default -> System.out.println(Colors.RED + ">>> Invalid Operation" + Colors.RESET);
       }
 
     }
@@ -66,7 +66,7 @@ public class Main {
         scanner.nextLine(); // consume leftover newline
         return value;
       } catch (InputMismatchException e) {
-        System.out.println(Colors.RED + "─>> Invalid input: please enter a whole number." + Colors.RESET);
+        System.out.println(Colors.RED + ">>> Invalid input: please enter a whole number." + Colors.RESET);
         scanner.nextLine(); // discard the bad token
       }
     }
@@ -81,7 +81,7 @@ public class Main {
         return value;
       } catch (InputMismatchException e) {
         System.out
-            .println(Colors.RED + "─>> Invalid input: please enter a valid amount (numbers only)." + Colors.RESET);
+            .println(Colors.RED + ">>> Invalid input: please enter a valid amount (numbers only)." + Colors.RESET);
         scanner.nextLine(); // discard the bad token
       }
     }
@@ -92,7 +92,7 @@ public class Main {
       System.out.print(prompt);
       String value = scanner.nextLine().trim();
       if (value.isEmpty()) {
-        System.out.println(Colors.RED + "─>> This field can't be empty." + Colors.RESET);
+        System.out.println(Colors.RED + ">>> This field can't be empty." + Colors.RESET);
       } else {
         return value;
       }
@@ -113,10 +113,10 @@ public class Main {
         System.out.println(Colors.GREEN + "─── Welcome back, " + customer.getFirstName() + Colors.RESET);
         return true;
       }
-      System.out.println(Colors.RED + "─>> Invalid credentials." + Colors.RESET);
+      System.out.println(Colors.RED + ">>> Invalid credentials." + Colors.RESET);
       return false;
     } catch (SQLException e) {
-      System.out.println(Colors.RED + "─>> Database error: " + e.getMessage() + Colors.RESET);
+      System.out.println(Colors.RED + ">>> Database error: " + e.getMessage() + Colors.RESET);
       return false;
     }
 
@@ -134,7 +134,7 @@ public class Main {
         System.out.println(Colors.GREEN + "─── Account created successfully, You can now log in." + Colors.RESET);
       }
     } catch (SQLException e) {
-      System.out.println(Colors.RED + "─>> Database error: " + e.getMessage() + Colors.RESET);
+      System.out.println(Colors.RED + ">>> Database error: " + e.getMessage() + Colors.RESET);
     }
 
   }
@@ -148,7 +148,7 @@ public class Main {
   static void handleDeposit() {
     double amount = readDouble("──> Enter an amount to be deposited: ");
     if (amount < 0) {
-      System.out.println(Colors.RED + "─>> Amount can't be negative" + Colors.RESET);
+      System.out.println(Colors.RED + ">>> Amount can't be negative" + Colors.RESET);
       return;
     }
     double newBalance = currentCustomer.getBalance() + amount;
@@ -157,18 +157,18 @@ public class Main {
       currentCustomer.setBalance(newBalance);
       System.out.println(Colors.GREEN + "─── Deposit successful." + Colors.RESET);
     } catch (SQLException e) {
-      System.out.println(Colors.RED + "─>> Database error: " + e.getMessage() + Colors.RESET);
+      System.out.println(Colors.RED + ">>> Database error: " + e.getMessage() + Colors.RESET);
     }
   }
 
   static void handleWithdraw() {
     double amount = readDouble("──> Enter an amount you want to withdraw: ");
     if (amount < 0) {
-      System.out.println(Colors.RED + "─>> Amount can't be negative" + Colors.RESET);
+      System.out.println(Colors.RED + ">>> Amount can't be negative" + Colors.RESET);
       return;
     }
     if (amount > currentCustomer.getBalance()) {
-      System.out.println(Colors.RED + "─>> Insufficient funds." + Colors.RESET);
+      System.out.println(Colors.RED + ">>> Insufficient funds." + Colors.RESET);
       return;
     }
     double newBalance = currentCustomer.getBalance() - amount;
@@ -177,7 +177,7 @@ public class Main {
       currentCustomer.setBalance(newBalance);
       System.out.println(Colors.GREEN + "─── Withdrawal successful." + Colors.RESET);
     } catch (SQLException e) {
-      System.out.println(Colors.RED + "─>> Database error: " + e.getMessage() + Colors.RESET);
+      System.out.println(Colors.RED + ">>> Database error: " + e.getMessage() + Colors.RESET);
     }
   }
 }
