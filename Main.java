@@ -1,6 +1,5 @@
 import java.sql.SQLException;
 import java.util.Scanner;
-// import java.sql.SQLException;
 
 public class Main {
 
@@ -26,16 +25,12 @@ public class Main {
       scanner.nextLine();
 
       switch (choice) {
-        case 1 -> login();
+        case 1 -> isAuthenticated = login();
         case 2 -> register();
         case 3 -> isRunning = false;
         default -> System.out.println("Invalid Operation");
       }
     }
-
-    // isAuthenticated = true;
-
-    double balance = 0;
 
     while (isRunning && isAuthenticated) {
       System.out.println("──────────────────────────────────────────────────────────────────────────────");
@@ -49,12 +44,13 @@ public class Main {
       choice = scanner.nextInt();
 
       switch (choice) {
-        case 1 -> showBalance(balance);
-        case 2 -> balance += deposit();
-        case 3 -> balance -= withDraw();
+        case 1 -> showBalance(currentCustomer.getBalance());
+        case 2 -> handleDeposit();
+        case 3 -> handleWithdraw();
         case 4 -> isRunning = false;
-        default -> System.out.println("Invalid Operation");
+        default -> System.out.println("──>> Invalid Operation");
       }
+
     }
 
     scanner.close();
@@ -66,6 +62,7 @@ public class Main {
 
     System.out.print("──> Enter your password: ");
     String password = scanner.nextLine();
+    
 
     try {
       Customer customer = customerDAO.authenticate(keyword, password);
@@ -74,16 +71,38 @@ public class Main {
         System.out.println("──> Welcome back, " + customer.getFirstName());
         return true;
       }
-      System.out.println("──> Invalid credentials.");
+      System.out.println("──>> Invalid credentials.");
       return false;
     } catch (SQLException e) {
-      System.out.println("──> Database error: " + e.getMessage());
+      System.out.println("──>> Database error: " + e.getMessage());
       return false;
     }
 
   }
 
   static void register() {
+    System.out.print("──> First name: ");
+    String firstName = scanner.nextLine();
+
+    System.out.print("──> Last name: ");
+    String lastName = scanner.nextLine();
+
+    System.out.print("──> Email: ");
+    String email = scanner.nextLine();
+
+    System.out.print("──> Password: ");
+    String password = scanner.nextLine();
+
+    System.out.print("──> Phone number: ");
+    String phone = scanner.nextLine();
+
+    try {
+      if (customerDAO.register(firstName, lastName, email, password, phone)) {
+        System.out.println("──> Account created! You can now log in.");
+      }
+    } catch (SQLException e) {
+      System.out.println("──>> Database error: " + e.getMessage());
+    }
 
   }
 
@@ -91,31 +110,42 @@ public class Main {
     System.out.printf("──> Your current balance is $%.2f\n", balance);
   }
 
-  static double deposit() {
-    Double amount;
-
+  static void handleDeposit() {
     System.out.print("──> Enter an amount to be deposited: ");
-    amount = scanner.nextDouble();
-
+    double amount = scanner.nextDouble();
     if (amount < 0) {
-      System.out.println("Amount can't be negative");
-      return 0;
-    } else {
-      return amount instanceof Double ? amount : 0;
+      System.out.println("──>> Amount can't be negative");
+      return;
+    }
+    double newBalance = currentCustomer.getBalance() + amount;
+    try {
+      customerDAO.updateBalance(currentCustomer.getId(), newBalance);
+      currentCustomer.setBalance(newBalance);
+      System.out.println("──> Deposit successful.");
+    } catch (SQLException e) {
+      System.out.println("──>> Database error: " + e.getMessage());
     }
   }
 
-  static double withDraw() {
-    double amount;
-
+  static void handleWithdraw() {
     System.out.print("──> Enter an amount you want to withdraw: ");
-    amount = scanner.nextDouble();
-
+    double amount = scanner.nextDouble();
     if (amount < 0) {
-      System.out.println("Amount can't be negative");
-      return 0;
-    } else {
-      return amount;
+      System.out.println("──>> Amount can't be negative");
+      return;
+    }
+    if (amount > currentCustomer.getBalance()) {
+      System.out.println("──>> Insufficient funds.");
+      return;
+    }
+    double newBalance = currentCustomer.getBalance() - amount;
+    try {
+      customerDAO.updateBalance(currentCustomer.getId(), newBalance);
+      currentCustomer.setBalance(newBalance);
+      System.out.println("──> Withdrawal successful.");
+    } catch (SQLException e) {
+      System.out.println("──>> Database error: " + e.getMessage());
     }
   }
+
 }

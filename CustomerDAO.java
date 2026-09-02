@@ -1,26 +1,31 @@
 import java.sql.*;
 
+import org.mindrot.jbcrypt.BCrypt;
+
 public class CustomerDAO {
 
   public Customer authenticate(String keyword, String password) throws SQLException {
-    String sql = "SELECT * FROM customers WHERE (email = ? OR phone = ?) AND password = ?";
+    String sql = "SELECT * FROM customers WHERE email = ? OR phone = ?";
 
     try (Connection conn = Database.getConnection();
         PreparedStatement stmt = conn.prepareStatement(sql)) {
 
       stmt.setString(1, keyword);
       stmt.setString(2, keyword);
-      stmt.setString(3, password);
 
       ResultSet rs = stmt.executeQuery();
+
       if (rs.next()) {
-        return new Customer(
-            rs.getInt("id"),
-            rs.getString("first_name"),
-            rs.getString("last_name"),
-            rs.getString("email"),
-            rs.getString("phone"),
-            rs.getDouble("balance"));
+        String storedHash = rs.getString("password");
+        if (BCrypt.checkpw(password, storedHash)) {
+          return new Customer(
+              rs.getInt("id"),
+              rs.getString("first_name"),
+              rs.getString("last_name"),
+              rs.getString("email"),
+              rs.getString("phone"),
+              rs.getDouble("balance"));
+        }
       }
       return null;
     }
@@ -28,6 +33,7 @@ public class CustomerDAO {
 
   public boolean register(String firstName, String lastName, String email, String password, String phone)
       throws SQLException {
+    String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
     String sql = "INSERT INTO customers (first_name, last_name, email, password, phone) VALUES (?, ?, ?, ?, ?)";
 
     try (Connection conn = Database.getConnection();
@@ -36,12 +42,12 @@ public class CustomerDAO {
       stmt.setString(1, firstName);
       stmt.setString(2, lastName);
       stmt.setString(3, email);
-      stmt.setString(4, password);
+      stmt.setString(4, hashedPassword);
       stmt.setString(5, phone);
       stmt.executeUpdate();
       return true;
     } catch (SQLIntegrityConstraintViolationException e) {
-      System.out.println("──> Email already registered.");
+      System.out.println("──>> Email already registered.");
       return false;
     }
   }
@@ -58,5 +64,6 @@ public class CustomerDAO {
     }
   }
 
-  public void getCustomerById(String id){}
+  public void getCustomerById(String id) {
+  }
 }

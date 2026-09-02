@@ -6,3 +6,4 @@ A simple banking system built with Java and uses a MySQL database to store custo
 
 ## Features
 
+* Secure Login / sign up system
