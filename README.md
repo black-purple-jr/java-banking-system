@@ -17,8 +17,8 @@ A simple banking system built with Java and uses a MySQL database to store custo
 
 ## Packages
 
-* JBCrypt: ...
-* MySQL Connector for Java: ...
+* **jBCrypt** — used for secure password hashing (bcrypt algorithm)
+* **MySQL Connector/J** — JDBC driver for connecting to MySQL
 
 ## Quick Start
 
@@ -35,7 +35,32 @@ A simple banking system built with Java and uses a MySQL database to store custo
 git clone https://github.com/black-purple-jr/java-banking-system
 ```
 
-#### 2. Compile and execute
+#### 2. Set up the database
+
+Start MySQL (e.g. via XAMPP), then create the database and table:
+
+```sql
+CREATE DATABASE bank;
+USE bank;
+
+CREATE TABLE customers (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    phone VARCHAR(20),
+    balance DOUBLE NOT NULL DEFAULT 0
+);
+```
+
+#### 3. Add dependencies
+
+Download and place these jars into the `lib/` folder:
+* [jBCrypt 0.4](https://repo1.maven.org/maven2/org/mindrot/jbcrypt/0.4/jbcrypt-0.4.jar)
+* [MySQL Connector/J 9.3.0](https://repo1.maven.org/maven2/com/mysql/mysql-connector-j/9.3.0/mysql-connector-j-9.3.0.jar)
+
+#### 4. Compile and execute
 
 ##### Windows
 
@@ -47,7 +72,7 @@ javac -cp ".;lib\*" *.java
 java -cp ".;lib\*" Main
 ```
 
-###### Mac / Linux
+##### Mac / Linux
 
 ```bash
 javac -cp ".:lib/*" *.java
