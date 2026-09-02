@@ -1,4 +1,5 @@
 import java.sql.SQLException;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class Main {
@@ -15,40 +16,39 @@ public class Main {
 
     while (isRunning && !isAuthenticated) {
       System.out.println("──────────────────────────────────────────────────────────────────────────────");
-      System.out.println("1. Connect to an existing bank account");
-      System.out.println("2. Create a new bank account");
-      System.out.println("3. Exit");
+      System.out.println("─── 1. Connect to an existing bank account");
+      System.out.println("─── 2. Create a new bank account");
+      System.out.println("─── 3. Exit");
       System.out.println("──────────────────────────────────────────────────────────────────────────────");
 
-      System.out.print("──> Enter your choice (1-3): ");
-      choice = scanner.nextInt();
-      scanner.nextLine();
+      choice = readInt("──> Enter your choice (1-3): ");
+      System.out.println("──────────────────────────────────────────────────────────────────────────────");
 
       switch (choice) {
         case 1 -> isAuthenticated = login();
         case 2 -> register();
         case 3 -> isRunning = false;
-        default -> System.out.println("Invalid Operation");
+        default -> System.out.println(Colors.RED + "─>> Invalid Operation" + Colors.RESET);
       }
     }
 
     while (isRunning && isAuthenticated) {
       System.out.println("──────────────────────────────────────────────────────────────────────────────");
-      System.out.println("1. Show balance");
-      System.out.println("2. Deposit");
-      System.out.println("3. Withdraw");
-      System.out.println("4. Exit");
+      System.out.println("─── 1. Show balance");
+      System.out.println("─── 2. Deposit");
+      System.out.println("─── 3. Withdraw");
+      System.out.println("─── 4. Exit");
       System.out.println("──────────────────────────────────────────────────────────────────────────────");
 
-      System.out.print("──> Enter your choice (1-4): ");
-      choice = scanner.nextInt();
+      choice = readInt("──> Enter your choice (1-4): ");
+      System.out.println("──────────────────────────────────────────────────────────────────────────────");
 
       switch (choice) {
         case 1 -> showBalance(currentCustomer.getBalance());
         case 2 -> handleDeposit();
         case 3 -> handleWithdraw();
         case 4 -> isRunning = false;
-        default -> System.out.println("──>> Invalid Operation");
+        default -> System.out.println(Colors.RED + "─>> Invalid Operation" + Colors.RESET);
       }
 
     }
@@ -56,96 +56,128 @@ public class Main {
     scanner.close();
   }
 
-  static boolean login() {
-    System.out.print("──> Enter your e-mail or your phone number: ");
-    String keyword = scanner.nextLine();
+  // Some helper methods
 
-    System.out.print("──> Enter your password: ");
-    String password = scanner.nextLine();
-    
+  static int readInt(String prompt) {
+    while (true) {
+      System.out.print(prompt);
+      try {
+        int value = scanner.nextInt();
+        scanner.nextLine(); // consume leftover newline
+        return value;
+      } catch (InputMismatchException e) {
+        System.out.println(Colors.RED + "─>> Invalid input: please enter a whole number." + Colors.RESET);
+        scanner.nextLine(); // discard the bad token
+      }
+    }
+  }
+
+  static double readDouble(String prompt) {
+    while (true) {
+      System.out.print(prompt);
+      try {
+        double value = scanner.nextDouble();
+        scanner.nextLine(); // consume leftover newline
+        return value;
+      } catch (InputMismatchException e) {
+        System.out
+            .println(Colors.RED + "─>> Invalid input: please enter a valid amount (numbers only)." + Colors.RESET);
+        scanner.nextLine(); // discard the bad token
+      }
+    }
+  }
+
+  static String readNonEmptyString(String prompt) {
+    while (true) {
+      System.out.print(prompt);
+      String value = scanner.nextLine().trim();
+      if (value.isEmpty()) {
+        System.out.println(Colors.RED + "─>> This field can't be empty." + Colors.RESET);
+      } else {
+        return value;
+      }
+    }
+  }
+
+  // Authentication methods
+
+  static boolean login() {
+    String keyword = readNonEmptyString("──> Enter your e-mail or your phone number: ");
+    String password = readNonEmptyString("──> Enter your password: ");
 
     try {
       Customer customer = customerDAO.authenticate(keyword, password);
       if (customer != null) {
         currentCustomer = customer;
-        System.out.println("──> Welcome back, " + customer.getFirstName());
+        System.out.println("──────────────────────────────────────────────────────────────────────────────");
+        System.out.println(Colors.GREEN + "─── Welcome back, " + customer.getFirstName() + Colors.RESET);
         return true;
       }
-      System.out.println("──>> Invalid credentials.");
+      System.out.println(Colors.RED + "─>> Invalid credentials." + Colors.RESET);
       return false;
     } catch (SQLException e) {
-      System.out.println("──>> Database error: " + e.getMessage());
+      System.out.println(Colors.RED + "─>> Database error: " + e.getMessage() + Colors.RESET);
       return false;
     }
 
   }
 
   static void register() {
-    System.out.print("──> First name: ");
-    String firstName = scanner.nextLine();
-
-    System.out.print("──> Last name: ");
-    String lastName = scanner.nextLine();
-
-    System.out.print("──> Email: ");
-    String email = scanner.nextLine();
-
-    System.out.print("──> Password: ");
-    String password = scanner.nextLine();
-
-    System.out.print("──> Phone number: ");
-    String phone = scanner.nextLine();
+    String firstName = readNonEmptyString("──> First name: ");
+    String lastName = readNonEmptyString("──> Last name: ");
+    String email = readNonEmptyString("──> Email: ");
+    String password = readNonEmptyString("──> Password: ");
+    String phone = readNonEmptyString("──> Phone number: ");
 
     try {
       if (customerDAO.register(firstName, lastName, email, password, phone)) {
-        System.out.println("──> Account created! You can now log in.");
+        System.out.println(Colors.GREEN + "─── Account created successfully, You can now log in." + Colors.RESET);
       }
     } catch (SQLException e) {
-      System.out.println("──>> Database error: " + e.getMessage());
+      System.out.println(Colors.RED + "─>> Database error: " + e.getMessage() + Colors.RESET);
     }
 
   }
 
+  // Account handling methods
+
   static void showBalance(double balance) {
-    System.out.printf("──> Your current balance is $%.2f\n", balance);
+    System.out.printf("─── Your current balance is $%.2f\n", balance);
   }
 
   static void handleDeposit() {
-    System.out.print("──> Enter an amount to be deposited: ");
-    double amount = scanner.nextDouble();
+    double amount = readDouble("──> Enter an amount to be deposited: ");
     if (amount < 0) {
-      System.out.println("──>> Amount can't be negative");
+      System.out.println(Colors.RED + "─>> Amount can't be negative" + Colors.RESET);
       return;
     }
     double newBalance = currentCustomer.getBalance() + amount;
     try {
       customerDAO.updateBalance(currentCustomer.getId(), newBalance);
       currentCustomer.setBalance(newBalance);
-      System.out.println("──> Deposit successful.");
+      System.out.println(Colors.GREEN + "─── Deposit successful." + Colors.RESET);
     } catch (SQLException e) {
-      System.out.println("──>> Database error: " + e.getMessage());
+      System.out.println(Colors.RED + "─>> Database error: " + e.getMessage() + Colors.RESET);
     }
   }
 
   static void handleWithdraw() {
-    System.out.print("──> Enter an amount you want to withdraw: ");
-    double amount = scanner.nextDouble();
+    double amount = readDouble("──> Enter an amount you want to withdraw: ");
     if (amount < 0) {
-      System.out.println("──>> Amount can't be negative");
+      System.out.println(Colors.RED + "─>> Amount can't be negative" + Colors.RESET);
       return;
     }
     if (amount > currentCustomer.getBalance()) {
-      System.out.println("──>> Insufficient funds.");
+      System.out.println(Colors.RED + "─>> Insufficient funds." + Colors.RESET);
       return;
     }
     double newBalance = currentCustomer.getBalance() - amount;
     try {
       customerDAO.updateBalance(currentCustomer.getId(), newBalance);
       currentCustomer.setBalance(newBalance);
-      System.out.println("──> Withdrawal successful.");
+      System.out.println(Colors.GREEN + "─── Withdrawal successful." + Colors.RESET);
     } catch (SQLException e) {
-      System.out.println("──>> Database error: " + e.getMessage());
+      System.out.println(Colors.RED + "─>> Database error: " + e.getMessage() + Colors.RESET);
     }
   }
-
 }
