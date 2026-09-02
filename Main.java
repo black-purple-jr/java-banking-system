@@ -15,14 +15,14 @@ public class Main {
     int choice;
 
     while (isRunning && !isAuthenticated) {
-      System.out.println("──────────────────────────────────────────────────────────────────────────────");
+      System.out.println("──────────────────────────────────────────────────────────────────────────────────────────────");
       System.out.println("─── 1. Connect to an existing bank account");
       System.out.println("─── 2. Create a new bank account");
       System.out.println("─── 3. Exit");
-      System.out.println("──────────────────────────────────────────────────────────────────────────────");
+      System.out.println("──────────────────────────────────────────────────────────────────────────────────────────────");
 
       choice = readInt("──> Enter your choice (1-3): ");
-      System.out.println("──────────────────────────────────────────────────────────────────────────────");
+      System.out.println("──────────────────────────────────────────────────────────────────────────────────────────────");
 
       switch (choice) {
         case 1 -> isAuthenticated = login();
@@ -33,15 +33,15 @@ public class Main {
     }
 
     while (isRunning && isAuthenticated) {
-      System.out.println("──────────────────────────────────────────────────────────────────────────────");
+      System.out.println("──────────────────────────────────────────────────────────────────────────────────────────────");
       System.out.println("─── 1. Show balance");
       System.out.println("─── 2. Deposit");
       System.out.println("─── 3. Withdraw");
       System.out.println("─── 4. Exit");
-      System.out.println("──────────────────────────────────────────────────────────────────────────────");
+      System.out.println("──────────────────────────────────────────────────────────────────────────────────────────────");
 
       choice = readInt("──> Enter your choice (1-4): ");
-      System.out.println("──────────────────────────────────────────────────────────────────────────────");
+      System.out.println("──────────────────────────────────────────────────────────────────────────────────────────────");
 
       switch (choice) {
         case 1 -> showBalance(currentCustomer.getBalance());
@@ -109,7 +109,7 @@ public class Main {
       Customer customer = customerDAO.authenticate(keyword, password);
       if (customer != null) {
         currentCustomer = customer;
-        System.out.println("──────────────────────────────────────────────────────────────────────────────");
+        System.out.println("──────────────────────────────────────────────────────────────────────────────────────────────");
         System.out.println(Colors.GREEN + "─── Welcome back, " + customer.getFirstName() + Colors.RESET);
         return true;
       }
