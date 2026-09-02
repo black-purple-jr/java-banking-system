@@ -17,8 +17,8 @@ A simple banking system built with Java and uses a MySQL database to store custo
 
 ## Packages
 
-* **jBCrypt** — used for secure password hashing (bcrypt algorithm)
-* **MySQL Connector/J** — JDBC driver for connecting to MySQL
+* **jBCrypt**: used for secure password hashing (bcrypt algorithm)
+* **MySQL Connector/J**: JDBC driver for connecting to MySQL
 
 ## Quick Start
 
@@ -62,7 +62,7 @@ Download and place these jars into the `lib/` folder:
 
 #### 4. Compile and execute
 
-##### Windows
+  ##### Windows
 
 ```bash
 javac -cp ".;lib\*" *.java
@@ -72,7 +72,7 @@ javac -cp ".;lib\*" *.java
 java -cp ".;lib\*" Main
 ```
 
-##### Mac / Linux
+  ##### Mac / Linux
 
 ```bash
 javac -cp ".:lib/*" *.java
@@ -81,3 +81,7 @@ javac -cp ".:lib/*" *.java
 ```bash
 java -cp ".:lib/*" Main
 ```
+
+## Author
+
+* Abdellah DAKIR ALLAH - a.k.a [black-purple-jr](https://github.com/black-purple-jr) on Github and some other platforms.
