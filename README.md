@@ -17,8 +17,8 @@ A simple banking system built with Java and uses a MySQL database to store custo
 
 ## Packages
 
-* **jBCrypt**: used for secure password hashing (bcrypt algorithm)
-* **MySQL Connector/J**: JDBC driver for connecting to MySQL
+* `jBCrypt`: used for secure password hashing (bcrypt algorithm)
+* `MySQL Connector/J`: JDBC driver for connecting to MySQL
 
 ## Quick Start
 
