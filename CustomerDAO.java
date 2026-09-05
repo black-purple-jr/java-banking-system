@@ -1,5 +1,4 @@
 import java.sql.*;
-
 import org.mindrot.jbcrypt.BCrypt;
 
 public class CustomerDAO {
